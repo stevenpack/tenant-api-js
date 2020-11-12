@@ -1,0 +1,19 @@
+{
+  "name": "tenant-api",
+  "version": "1.0.0",
+  "description": "Example tenant API commands",
+  "main": "index.js",
+  "scripts": {
+    "validate": "node index validate",
+    "account": "node index account",
+    "user": "node index user",
+    "zone": "node index zone",
+    "plan": "node index plan"
+    
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.0"
+  }
+}
