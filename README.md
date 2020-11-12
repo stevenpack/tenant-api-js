@@ -25,3 +25,7 @@ npm run plan
 ```
 
 To avoid placing your API_KEY in the config file, you can also set it as an environment variable.
+
+## Not official advice
+
+The purpose of this code is to help you get started. Consult your account team or [official documentation](https://developers.cloudflare.com/tenant/)
