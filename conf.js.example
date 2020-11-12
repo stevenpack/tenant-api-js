@@ -1,7 +1,7 @@
 {
     "API_EMAIL": "spack@cloudflare.com",
     "API_KEY": "<RECOMMEND TO PROVIDE AS ENV VAR>",
-    "ACCOUNT_ID": "b88135f6fd85583eb4dda76d022c1148",
+    "ACCOUNT_ID": "<GUID FROM THE CLOUDFLARE DASHBOARD>",
     //"INVITE_EMAIL": "steven.pack.code@gmail.com",
     //"ZONE_NAME": "example.org"
 }
