@@ -6,7 +6,7 @@
 ## Configuration
 Rename `conf.js.example` to `conf.js` and fill out the details
 
-## Run
+## Users and Plans
 ```
 # Check the config looks OK
 npm run validate
@@ -25,6 +25,20 @@ npm run plan
 ```
 
 To avoid placing your API_KEY in the config file, you can also set it as an environment variable.
+
+## Secure Web Gateway
+```
+dig sportsbet.com +short
+dig sportsbet.com @172.64.36.1 +short # Expect regular result
+# npm run create-account (already done)
+npm run ip #Get the source IP if we are using IPv4 DNS Servers
+npm run create-location # Can be single. Client may need to keep up-to-date.
+npm run create-rule 
+dig sportsbet.com @172.64.36.1 +short # Expect 0.0.0.0 
+dig paddypower.com @172.64.36.1 +short # Expect 0.0.0.0 
+#TODOs block pages etc.
+```
+
 
 ## Not official advice
 

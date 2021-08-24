@@ -5,7 +5,11 @@
   "main": "index.js",
   "scripts": {
     "validate": "node index validate",
-    "account": "node index account",
+    "create-account": "node index create-account",
+    "create-location": "node index create-location",
+    "list-locations": "node index list-locations",
+    "create-rule": "node index create-rule",
+    "ip": "node index ip",
     "user": "node index user",
     "zone": "node index zone",
     "plan": "node index plan"

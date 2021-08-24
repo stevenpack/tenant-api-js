@@ -28,8 +28,83 @@ async function validateConfig() {
 }
 
 async function createAccount() {
-    let acct = { "name": "Tenant Account " + fauxRand(), "type": "standard" };
-    await post("/accounts", acct)   
+    let name = conf.ACCOUNT_NAME || `Tenant Account ${fauxRand()}`;
+    let acct = { "name": name, "type": "standard" };
+    await post("/accounts", acct);
+}
+
+async function createLocation() {
+    let name = conf.LOCATION_NAME || `Home`;
+    let location = { 
+        "name": name, 
+        "client_default": true,
+        "networks": [
+            {"network": "47.45.170.55/32"}
+        ] //your INTERNET facing IP
+    };
+    await post(`accounts/${conf.ACCOUNT_ID}/gateway/locations/`, location);
+}
+
+async function listLocations() {
+    await get(`accounts/${conf.ACCOUNT_ID}/gateway/locations/`);
+}
+
+async function createRule() {
+    // let rule = {
+    //     "name": "Block sportsbet",
+    //     "conditions": [
+    //       {
+    //         "type": "traffic",
+    //         "expression": {
+    //           "any": {
+    //             "==": {
+    //               "lhs": {
+    //                 "splat": "dns.domains"
+    //               },
+    //               "rhs": "sportsbet.com"
+    //             }
+    //           }
+    //         }
+    //       }
+    //     ],
+    //     "action": "block",
+    //     "precedence": 11000,
+    //     "enabled": true,
+    //     "description": "",
+    //     "filters": [
+    //       "dns"
+    //     ]
+    // }
+    let rule = {
+        "name": "Block sportsbet",
+        "conditions": [
+          {
+            "type": "traffic",
+            "expression": {
+              "any": {
+                "in": {
+                  "lhs": {
+                    "splat": "dns.content_category"
+                  },
+                  "rhs": [99]
+                }
+              }
+            }
+          }
+        ],
+        "action": "block",
+        "precedence": 11000,
+        "enabled": true,
+        "description": "",
+        "filters": [
+          "dns"
+        ]
+    }
+    await post(`accounts/${conf.ACCOUNT_ID}/gateway/rules`, rule);
+}
+
+async function showIp() {
+    await get("https://api4.my-ip.io/ip", true);
 }
 
 async function inviteUser() {
@@ -79,15 +154,32 @@ function dump(res) {
     }
     if (res.data && res.data.result) {
         debug(res.data.result);
+    } else {
+        if (res.data) {
+            debug(res.data);
+        }
     }
 }
 
 async function go() {
     let cmd = process.argv[2] || "validate";
     info(`Executing command '${cmd}'...`);
+    debug(conf);
     switch (cmd) {
-        case "account":
+        case "create-account":
             await createAccount();
+            break;
+        case "create-location":
+            await createLocation();
+            break;
+        case "list-locations":
+            await listLocations();
+            break;
+        case "create-rule":
+            await createRule();
+            break;
+        case "ip":
+            await showIp();
             break;
         case "user":
             await inviteUser();
@@ -102,8 +194,9 @@ async function go() {
         case "-h":
             console.log("Usage: node index [validate|account|user|zone|plan]")
         case "validate":
-        default:
             await validateConfig();
+        default:
+            console.error("Unknown command. Try 'validate'")
             break;
     }
     info("done.");
@@ -119,7 +212,7 @@ async function get(url, verbose = true) {
 }
 
 async function post(url, data, verbose = true) {
-    debug(`Posting to ${url}`);
+    debug(`POST to ${url}`);
     try {
         let res = await axios.post(url, data);
         if (verbose) {
@@ -137,7 +230,29 @@ async function post(url, data, verbose = true) {
             //than an API error, to help with debugging
             debug(e);
         }
-    }    
+    }       
+}
+
+async function put(url, data, verbose = true) {
+    debug(`PUT to ${url}`);
+    try {
+        let res = await axios.put(url, data);
+        if (verbose) {
+            dump(res);    
+        }
+        return res;
+    } catch (e) {
+        if (e.response) {
+            //Show a concise version withe CF API errors
+            dump(e.response);
+            return e.response;
+        }
+        else {
+            //Dump the whole thing if we got a protocol error rather
+            //than an API error, to help with debugging
+            debug(e);
+        }
+    }       
 }
 
 function debug(obj) {
